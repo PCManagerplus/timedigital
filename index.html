@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Clock</title>
+    <title>デジタル時計</title>
     <style>
         body {
             display: flex;
@@ -17,6 +17,7 @@
 
         #clock {
             font-size: 3em;
+            color: black; /* デフォルトのテーマはブラック */
         }
 
         #fullscreen-button {
@@ -27,30 +28,80 @@
             font-size: 1em;
             cursor: pointer;
         }
+
+        #settings {
+            display: none; /* 初期状態では非表示 */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+        }
+
+        #settings label {
+            display: block;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
     <div id="clock"></div>
     <button id="fullscreen-button" onclick="toggleFullScreen()">全画面表示</button>
+    <div id="settings">
+        <label>文字サイズ:
+            <input type="range" min="1" max="5" value="3" id="sizeRange" onchange="changeSize(this.value)">
+        </label>
+        <br>
+        <label>テーマ:
+            <select id="themeSelect" onchange="changeTheme(this.value)">
+                <option value="black">ブラック</option>
+                <option value="white">ホワイト</option>
+            </select>
+        </label>
+    </div>
 
     <script>
+        const clock = document.getElementById('clock');
+        const sizeRange = document.getElementById('sizeRange');
+        const themeSelect = document.getElementById('themeSelect');
+        const settings = document.getElementById('settings');
+        let isFullscreen = false;
+
         function updateTime() {
             const now = new Date();
             const hours = String(now.getHours()).padStart(2, '0');
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+            clock.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
         setInterval(updateTime, 1000);
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
+            if (!isFullscreen) {
                 document.documentElement.requestFullscreen();
+                settings.style.display = 'none'; // 全画面表示時は設定を非表示にする
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
+                    settings.style.display = 'block'; // 全画面解除時は設定を再表示する
                 }
+            }
+            isFullscreen = !isFullscreen;
+        }
+
+        function changeSize(value) {
+            clock.style.fontSize = value + 'em';
+        }
+
+        function changeTheme(theme) {
+            if (theme === 'black') {
+                clock.style.color = 'black';
+            } else if (theme === 'white') {
+                clock.style.color = 'white';
             }
         }
     </script>
