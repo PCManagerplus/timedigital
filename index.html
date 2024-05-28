@@ -12,8 +12,6 @@
             height: 100vh;
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #333; /* ブラックテーマの背景色 */
-            color: #fff; /* ブラックテーマの文字色 */
             transition: background-color 0.5s, color 0.5s; /* 色変更のアニメーション */
         }
 
@@ -71,14 +69,6 @@
             <button onclick="applyCustomFontSize()">適用</button>
         </div>
         <div class="theme-option">
-            <input type="radio" id="light-theme" name="theme" value="light" checked>
-            <label for="light-theme">ライトテーマ</label>
-        </div>
-        <div class="theme-option">
-            <input type="radio" id="dark-theme" name="theme" value="dark">
-            <label for="dark-theme">ダークテーマ</label>
-        </div>
-        <div class="theme-option">
             <input type="checkbox" id="show-seconds" onchange="toggleSeconds()">
             <label for="show-seconds">秒の表示</label>
         </div>
@@ -88,9 +78,9 @@
         let clock = document.getElementById('clock');
         let fontSizeSelect = document.getElementById('font-size-select');
         let customFontSizeInput = document.getElementById('custom-font-size-input');
+        let showSecondsCheckbox = document.getElementById('show-seconds');
         let lightThemeRadio = document.getElementById('light-theme');
         let darkThemeRadio = document.getElementById('dark-theme');
-        let showSecondsCheckbox = document.getElementById('show-seconds');
 
         function updateTime() {
             const now = new Date();
@@ -147,18 +137,19 @@
             clock.style.fontSize = customSize + 'px';
         }
 
-        lightThemeRadio.addEventListener('change', function() {
-            document.body.style.backgroundColor = '#333'; /* 背景をブラックに設定 */
-            document.body.style.color = '#fff'; /* 文字をホワイトに設定 */
-        });
-
-        darkThemeRadio.addEventListener('change', function() {
-            document.body.style.backgroundColor = '#f0f0f0'; /* 背景をホワイトに設定 */
-            document.body.style.color = '#333'; /* 文字をダークに設定 */
-        });
-
         function toggleSeconds() {
             updateTime();
+        }
+
+        // デバイスのテーマに合わせてテーマを切り替える
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            // ブラックテーマ
+            document.body.style.backgroundColor = '#333'; /* 背景をブラックに設定 */
+            document.body.style.color = '#fff'; /* 文字をホワイトに設定 */
+        } else {
+            // ホワイトテーマ
+            document.body.style.backgroundColor = '#fff'; /* 背景をホワイトに設定 */
+            document.body.style.color = '#333'; /* 文字をダークに設定 */
         }
     </script>
 </body>
