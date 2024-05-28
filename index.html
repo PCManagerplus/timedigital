@@ -14,6 +14,7 @@
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             color: #333; /* デフォルトの文字色 */
+            transition: background-color 0.5s, color 0.5s; /* 色変更のアニメーション */
         }
 
         #clock {
@@ -52,8 +53,8 @@
 </head>
 <body>
     <div id="clock"></div>
-    <button id="fullscreen-button" onclick="toggleFullScreen()">全画面表示</button>
     <button id="settings-button" onclick="toggleSettings()">設定</button>
+    <button id="fullscreen-button" onclick="toggleFullScreen()">全画面表示</button>
     <div id="settings-container">
         <label for="font-size-select">文字サイズ：</label>
         <select id="font-size-select" onchange="changeFontSize()">
@@ -143,7 +144,7 @@
 
         darkThemeRadio.addEventListener('change', function() {
             document.body.style.backgroundColor = '#333'; /* 背景をダークに設定 */
-            document.body.style.color = '#f0f0f0'; /* 文字をライトに設定 */
+            document.body.style.color = '#fff'; /* 文字をホワイトに設定 */
         });
     </script>
 </body>
