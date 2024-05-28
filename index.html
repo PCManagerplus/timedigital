@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>デジタル時計</title>
+    <title>Digital Clock</title>
     <style>
         body {
             display: flex;
@@ -13,36 +13,39 @@
             margin: 0;
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
+            color: #333; /* デフォルトの文字色 */
         }
 
         #clock {
             font-size: 3em;
-            color: black; /* デフォルトのテーマはブラック */
+            transition: font-size 0.5s; /* フォントサイズ変更のアニメーション */
         }
 
-        #fullscreen-button {
+        #fullscreen-button, #settings-button {
             position: fixed;
             bottom: 20px;
-            right: 20px;
             padding: 10px 20px;
             font-size: 1em;
             cursor: pointer;
         }
 
-        #settings {
-            display: none; /* 初期状態では非表示 */
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.2);
+        #settings-button {
+            right: 80px;
         }
 
-        #settings label {
-            display: block;
+        #settings-container {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .theme-option {
             margin-bottom: 10px;
         }
     </style>
@@ -50,25 +53,36 @@
 <body>
     <div id="clock"></div>
     <button id="fullscreen-button" onclick="toggleFullScreen()">全画面表示</button>
-    <div id="settings">
-        <label>文字サイズ:
-            <input type="range" min="1" max="5" value="3" id="sizeRange" onchange="changeSize(this.value)">
-        </label>
-        <br>
-        <label>テーマ:
-            <select id="themeSelect" onchange="changeTheme(this.value)">
-                <option value="black">ブラック</option>
-                <option value="white">ホワイト</option>
-            </select>
-        </label>
+    <button id="settings-button" onclick="toggleSettings()">設定</button>
+    <div id="settings-container">
+        <label for="font-size-select">文字サイズ：</label>
+        <select id="font-size-select" onchange="changeFontSize()">
+            <option value="1">小</option>
+            <option value="2" selected>中</option>
+            <option value="3">大</option>
+            <option value="custom">カスタム</option>
+        </select>
+        <div id="custom-font-size" style="display: none;">
+            <label for="custom-font-size-input">カスタムサイズ（px）：</label>
+            <input type="number" id="custom-font-size-input" min="10" max="100" step="1" value="30">
+            <button onclick="applyCustomFontSize()">適用</button>
+        </div>
+        <div class="theme-option">
+            <input type="radio" id="light-theme" name="theme" value="light" checked>
+            <label for="light-theme">ライトテーマ</label>
+        </div>
+        <div class="theme-option">
+            <input type="radio" id="dark-theme" name="theme" value="dark">
+            <label for="dark-theme">ダークテーマ</label>
+        </div>
     </div>
 
     <script>
-        const clock = document.getElementById('clock');
-        const sizeRange = document.getElementById('sizeRange');
-        const themeSelect = document.getElementById('themeSelect');
-        const settings = document.getElementById('settings');
-        let isFullscreen = false;
+        let clock = document.getElementById('clock');
+        let fontSizeSelect = document.getElementById('font-size-select');
+        let customFontSizeInput = document.getElementById('custom-font-size-input');
+        let lightThemeRadio = document.getElementById('light-theme');
+        let darkThemeRadio = document.getElementById('dark-theme');
 
         function updateTime() {
             const now = new Date();
@@ -81,29 +95,56 @@
         setInterval(updateTime, 1000);
 
         function toggleFullScreen() {
-            if (!isFullscreen) {
+            if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen();
-                settings.style.display = 'none'; // 全画面表示時は設定を非表示にする
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
-                    settings.style.display = 'block'; // 全画面解除時は設定を再表示する
                 }
             }
-            isFullscreen = !isFullscreen;
         }
 
-        function changeSize(value) {
-            clock.style.fontSize = value + 'em';
+        function toggleSettings() {
+            let settingsContainer = document.getElementById('settings-container');
+            settingsContainer.style.display = settingsContainer.style.display === 'none' ? 'block' : 'none';
         }
 
-        function changeTheme(theme) {
-            if (theme === 'black') {
-                clock.style.color = 'black';
-            } else if (theme === 'white') {
-                clock.style.color = 'white';
+        function changeFontSize() {
+            let selectedSize = fontSizeSelect.value;
+            if (selectedSize === 'custom') {
+                document.getElementById('custom-font-size').style.display = 'block';
+            } else {
+                document.getElementById('custom-font-size').style.display = 'none';
+                switch (selectedSize) {
+                    case '1':
+                        clock.style.fontSize = '2em';
+                        break;
+                    case '2':
+                        clock.style.fontSize = '3em';
+                        break;
+                    case '3':
+                        clock.style.fontSize = '4em';
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
+        function applyCustomFontSize() {
+            let customSize = customFontSizeInput.value;
+            clock.style.fontSize = customSize + 'px';
+        }
+
+        lightThemeRadio.addEventListener('change', function() {
+            document.body.style.backgroundColor = '#f0f0f0'; /* 背景をライトに設定 */
+            document.body.style.color = '#333'; /* 文字をダークに設定 */
+        });
+
+        darkThemeRadio.addEventListener('change', function() {
+            document.body.style.backgroundColor = '#333'; /* 背景をダークに設定 */
+            document.body.style.color = '#f0f0f0'; /* 文字をライトに設定 */
+        });
     </script>
 </body>
 </html>
